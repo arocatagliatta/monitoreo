@@ -1,0 +1,16 @@
+Registro	Descripción	Valor 32-bit	Unidad
+-------------------------------------------------------------
+4097	3-phase system voltage	400	Volt
+4099	Phase voltage L1-N	227	Volt
+4101	Phase voltage L2-N	233	Volt
+4103	Phase voltage L3-N	234	Volt
+4111	3-phase system current	9300	mA
+4113	Line current L1	20850	mA
+4115	Line current L2	5850	mA
+4117	Line current L3	1350	mA
+4143	3-phase total active power	5985	Watt
+4145	Active power L1	4680	Watt
+4147	Active power L2	1080	Watt
+4149	Active power L3	225	Watt
+4151	3-phase reactive power	-1680	VAr
+4167	Frequency	50050	mHz
