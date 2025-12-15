@@ -50,6 +50,15 @@ services:
       - SERIAL_PORT=/dev/ttyUSB0
     restart: unless-stopped
 
+  snmp-exporter:
+    image: prom/snmp-exporter:latest
+    container_name: snmp_exporter
+    restart: unless-stopped
+    ports:
+      - "9116:9116"
+    volumes:
+      - /home/arocatagliatta/Monitoreo/snmp/snmp.yml:/etc/snmp_exporter/snmp.yml
+
 volumes:
   grafana_data:
   prometheus_data:

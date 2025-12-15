@@ -1,0 +1,135 @@
+auths:
+  public_v1:
+    community: public
+    security_level: noAuthNoPriv
+    auth_protocol: MD5
+    priv_protocol: DES
+    version: 1
+  public_v2:
+    community: public
+    security_level: noAuthNoPriv
+    auth_protocol: MD5
+    priv_protocol: DES
+    version: 2
+
+modules:
+    if_mib:
+      walk:
+
+        # Entrada
+        - 1.3.6.1.4.1.534.1.3.4.1.2.1     # input_voltage_l1
+        - 1.3.6.1.4.1.534.1.3.8.1.0       # input_voltage
+        - 1.3.6.1.4.1.534.1.10.2.4.2.0    # input_voltage_adv
+        - 1.3.6.1.4.1.534.1.10.2.4.3.0    # input_frequency
+
+        # Salida
+        - 1.3.6.1.4.1.534.1.4.4.1.2.1     # output_voltage_l1
+        - 1.3.6.1.4.1.534.1.4.4.1.7.1     # output_current_l1
+        - 1.3.6.1.4.1.534.1.4.4.1.9.1     # output_power
+        - 1.3.6.1.4.1.534.1.4.9.5.0       # load_percent
+
+        # Batería
+        - 1.3.6.1.4.1.534.1.2.1.0         # battery_runtime_seconds
+        - 1.3.6.1.4.1.534.1.2.2.0         # battery_charge
+        - 1.3.6.1.4.1.534.1.2.4.0         # battery_status
+        - 1.3.6.1.4.1.534.1.10.2.4.9.0    # battery_charge_adv
+        - 1.3.6.1.4.1.534.1.10.2.4.12.0   # battery_temperature
+
+        # Temperaturas
+        - 1.3.6.1.4.1.534.1.6.1.0         # internal_temperature
+        - 1.3.6.1.4.1.534.1.7.1.0         # temp_sensor_1
+        - 1.3.6.1.4.1.534.1.7.18.0        # temp_sensor_2
+
+        # Estado
+        - 1.3.6.1.4.1.534.1.2.5.0         # operation_mode
+        - 1.3.6.1.4.1.534.1.3.3.0         # input_mode
+        - 1.3.6.1.4.1.534.1.9.7.0         # online_status
+
+        # Carga
+        - 1.3.6.1.4.1.534.1.13.1.0        # power_percent
+        - 1.3.6.1.4.1.534.1.13.2.0        # power_real_w
+
+      metrics:
+        - name: input_voltage_l1
+          oid: 1.3.6.1.4.1.534.1.3.4.1.2.1
+          type: gauge
+
+        - name: input_voltage
+          oid: 1.3.6.1.4.1.534.1.3.8.1.0
+          type: gauge
+
+        - name: input_voltage_adv
+          oid: 1.3.6.1.4.1.534.1.10.2.4.2.0
+          type: gauge
+
+        - name: input_frequency
+          oid: 1.3.6.1.4.1.534.1.10.2.4.3.0
+          type: gauge
+
+        - name: output_voltage_l1
+          oid: 1.3.6.1.4.1.534.1.4.4.1.2.1
+          type: gauge
+
+        - name: output_current_l1
+          oid: 1.3.6.1.4.1.534.1.4.4.1.7.1
+          type: gauge
+
+        - name: output_power
+          oid: 1.3.6.1.4.1.534.1.4.4.1.9.1
+          type: gauge
+
+        - name: load_percent
+          oid: 1.3.6.1.4.1.534.1.4.9.5.0
+          type: gauge
+
+        - name: battery_runtime_seconds
+          oid: 1.3.6.1.4.1.534.1.2.1.0
+          type: gauge
+
+        - name: battery_charge
+          oid: 1.3.6.1.4.1.534.1.2.2.0
+          type: gauge
+
+        - name: battery_status
+          oid: 1.3.6.1.4.1.534.1.2.4.0
+          type: gauge
+
+        - name: battery_charge_adv
+          oid: 1.3.6.1.4.1.534.1.10.2.4.9.0
+          type: gauge
+
+        - name: battery_temperature
+          oid: 1.3.6.1.4.1.534.1.10.2.4.12.0
+          type: gauge
+
+        - name: internal_temperature
+          oid: 1.3.6.1.4.1.534.1.6.1.0
+          type: gauge
+
+        - name: temp_sensor_1
+          oid: 1.3.6.1.4.1.534.1.7.1.0
+          type: gauge
+
+        - name: temp_sensor_2
+          oid: 1.3.6.1.4.1.534.1.7.18.0
+          type: gauge
+
+        - name: operation_mode
+          oid: 1.3.6.1.4.1.534.1.2.5.0
+          type: gauge
+
+        - name: input_mode
+          oid: 1.3.6.1.4.1.534.1.3.3.0
+          type: gauge
+
+        - name: online_status
+          oid: 1.3.6.1.4.1.534.1.9.7.0
+          type: gauge
+
+        - name: power_percent
+          oid: 1.3.6.1.4.1.534.1.13.1.0
+          type: gauge
+
+        - name: power_real_w
+          oid: 1.3.6.1.4.1.534.1.13.2.0
+          type: gauge

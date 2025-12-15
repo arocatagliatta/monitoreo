@@ -13,3 +13,22 @@ scrape_configs:
   - job_name: 'modbus_exporter'
     static_configs:
       - targets: ['172.16.48.127:9101']
+
+  - job_name: 'snmp_ups'
+    metrics_path: /snmp
+    params:
+      module: [if_mib]
+
+    static_configs:
+      - targets:
+          - 172.16.48.100
+
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+
+      - source_labels: [__param_target]
+        target_label: instance
+
+      - target_label: __address__
+        replacement: 172.16.48.127:9116
