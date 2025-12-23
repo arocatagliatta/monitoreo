@@ -2,20 +2,20 @@ version: "3.9"
 
 services:
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.8.1
     container_name: prometheus
     ports:
       - "9090:9090"
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.retention.time=90d"
+      - "--storage.tsdb.retention.time=360d"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.3.1
     container_name: grafana
     ports:
       - "3000:3000"
@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
 
   node_exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.10.2
     container_name: node_exporter
     command:
       - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
@@ -51,7 +51,7 @@ services:
     restart: unless-stopped
 
   snmp-exporter:
-    image: prom/snmp-exporter:latest
+    image: prom/snmp-exporter:v0.29.0
     container_name: snmp_exporter
     restart: unless-stopped
     ports:
