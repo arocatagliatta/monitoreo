@@ -1,0 +1,59 @@
+groups:
+- name: ejemplo
+  rules:
+    - alert: PrometheusJobMissing
+      expr: absent(up{job="prometheus"})
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: Prometheus job missing (instance {{ $labels.instance }})
+        description: "A Prometheus job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  
+    - alert: HostOutOfMemory
+      expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < .10)
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: Host out of memory ({{ $labels.job }})
+        description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: abb_corriente
+  rules:
+    - alert: CorrienteBajaL2
+      expr: abb_current_l2 == 0
+      labels:
+        severity: warning
+      annotations:
+        summary: "Corriente en línea L2 bajo a 0 A"
+        description: "La corriente en L2 bajo a 0 A ({{ $value }} mA)"
+
+    - alert: CorrienteAltaL1
+      expr: abb_current_l1 > 30000
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Corriente en línea L1 supera 30 A"
+        description: "La corriente en L1 supera 30 A ({{ $value }} mA)"      
+
+    - alert: CorrienteAltaL3
+      expr: abb_current_l3 > 20000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Corriente en línea L3 supera 20 A"
+        description: "La corriente en L3 supera 20 A ({{ $value }} mA)"      
+
+- name: docker_container
+  rules:
+    - alert: DockerContainerDown
+      expr: time() - container_last_seen {name!=""} > 60
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Contenedor {{ $labels.name }} caído"
+        description: "El contenedor {{ $labels.name }} no reporta métricas hace más de 1 minuto."

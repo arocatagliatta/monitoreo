@@ -1,0 +1,21 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "discord-notifications"
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: "discord-notifications"
+    discord_configs:
+      - webhook_url: "https://discord.com/api/webhooks/1455230061212078223/vGwLhfBkyp8CEOHs8XmTNoe2h6VD2lyFzxeo7T-3tTEhMu91xuKIGf5wX_W32ESCyk-J"
+        title: "{{ .CommonAnnotations.summary }}"
+        message: |
+          {{ range .Alerts }}
+          **Alerta:** {{ .Annotations.summary }}
+          **Servicio:** {{ .Labels.name }}
+          **Severidad:** {{ .Labels.severity }}
+          **Estado:** {{ .Status }}
+          {{ end }}
