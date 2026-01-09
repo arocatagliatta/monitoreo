@@ -19,12 +19,12 @@ groups:
         summary: Host out of memory ({{ $labels.job }})
         description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-- name: abb_corriente
+- name: abb_tablero
   rules:
     - alert: CorrienteBajaL2
       expr: abb_current_l2 == 0
       labels:
-        severity: warning
+        severity: critical
       annotations:
         summary: "Corriente en línea L2 bajo a 0 A"
         description: "La corriente en L2 bajo a 0 A ({{ $value }} mA)"
@@ -57,3 +57,23 @@ groups:
       annotations:
         summary: "Contenedor {{ $labels.name }} caído"
         description: "El contenedor {{ $labels.name }} no reporta métricas hace más de 1 minuto."
+
+- name: UPS
+  rules:
+    - alert: UPS en bypass
+      expr: ups_status == 4
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "La UPS paso a estado bypass"
+        description: "La UPS se encuentra en estado bypass hace más de 1 minuto."
+
+    - alert: UPS con batería
+      expr: ups_status == 5
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "La UPS paso a estado bateria"
+        description: "La UPS se encuentra en estado bateria hace más de 1 minuto."

@@ -4,6 +4,12 @@ services:
   prometheus:
     image: prom/prometheus:v3.8.1
     container_name: prometheus
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s # Tiempo de gracia para que la app arranque
     ports:
       - "9090:9090"
     command:
@@ -43,10 +49,10 @@ services:
     container_name: abb_modbus
     privileged: true
     devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
+      - "/dev/ttyUSB0:/dev/ttyUSB0" #Una vez conectado el dispositivo controlar que puerto tomo con "ls -l /dev/ttyUSB*"
     volumes:
       - /var/lib/node_exporter/textfile_collector:/var/lib/node_exporter/textfile_collector
-      - /home/arocatagliatta/Monitoreo:/home/arocatagliatta/Monitoreo
+      - /home/arocatagliatta/Monitoreo:/home/arocatagliatta/Monitoreo #Remplazar por ruta final del archivo modbus_export.py
     environment:
       - SERIAL_PORT=/dev/ttyUSB0
     restart: unless-stopped
@@ -58,7 +64,7 @@ services:
     ports:
       - "9116:9116"
     volumes:
-      - /home/arocatagliatta/Monitoreo/snmp/snmp.yml:/etc/snmp_exporter/snmp.yml
+      - /home/arocatagliatta/Monitoreo/snmp/snmp.yml:/etc/snmp_exporter/snmp.yml #Remplazar por ruta final del archivo snmp.yml
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -73,7 +79,7 @@ services:
     restart: unless-stopped
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: gcr.io/cadvisor/cadvisor:v0.55.1
     container_name: cadvisor
     restart: unless-stopped
     ports:

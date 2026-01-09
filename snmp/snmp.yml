@@ -156,3 +156,8 @@ modules:
         type: gauge
         help: "UPS bypass frequency (Hz)"
         scale: 0.1  
+
+      - name: ups_bypass_current
+        oid: 1.3.6.1.4.1.534.1.5.4.2.0	
+        type: gauge
+        help: "UPS bypass current (A)"
