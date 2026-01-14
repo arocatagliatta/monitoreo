@@ -4,12 +4,6 @@ services:
   prometheus:
     image: prom/prometheus:v3.8.1
     container_name: prometheus
-    healthcheck:
-      test: [ "CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 5s # Tiempo de gracia para que la app arranque
     ports:
       - "9090:9090"
     command:
@@ -20,6 +14,12 @@ services:
       - prometheus_data:/prometheus
       - ./prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   grafana:
     image: grafana/grafana:12.3.1
@@ -29,20 +29,32 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:3000/api/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   node_exporter:
     image: prom/node-exporter:v1.10.2
     container_name: node_exporter
-    command:
-      - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
     ports:
       - "9100:9100"
+    command:
+      - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
     volumes:
       - /proc:/host/proc
       - /sys:/host/sys
       - /:/rootfs
       - /var/lib/node_exporter/textfile_collector:/var/lib/node_exporter/textfile_collector
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:9100/metrics" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   abb_modbus:
     image: abb_modbus:v1
@@ -56,15 +68,27 @@ services:
     environment:
       - SERIAL_PORT=/dev/ttyUSB0
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "find /var/lib/node_exporter/textfile_collector/abb.prom -mmin -2 | grep -q abb.prom" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   snmp-exporter:
     image: prom/snmp-exporter:v0.29.0
     container_name: snmp_exporter
-    restart: unless-stopped
     ports:
       - "9116:9116"
     volumes:
       - /home/arocatagliatta/Monitoreo/snmp/snmp.yml:/etc/snmp_exporter/snmp.yml #Remplazar por ruta final del archivo snmp.yml
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:9116/metrics >/dev/null" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -77,11 +101,17 @@ services:
       - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
       - alertmanager_data:/alertmanager
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:9093/-/healthy | grep -q OK" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.55.1
     container_name: cadvisor
-    restart: unless-stopped
+    privileged: true
     ports:
       - "8080:8080"
     volumes:
@@ -90,9 +120,28 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
-    privileged: true
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8080/healthz | grep -q ok" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  portainer:
+    image: portainer/portainer-ce:2.19.4
+    container_name: portainer
+    ports:
+      - "9443:9443" # UI/API segura (https)
+      - "9000:9000" # UI/API segura (http)
+      - "8000:8000" # Opcional: túnel Docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: unless-stopped
 
 volumes:
   grafana_data:
   prometheus_data:
   alertmanager_data:
+  portainer_data:
