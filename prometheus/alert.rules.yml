@@ -12,7 +12,7 @@ groups:
   
     - alert: HostOutOfMemory
       expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < .10)
-      for: 2m
+      for: 0m
       labels:
         severity: warning
       annotations:
@@ -77,3 +77,14 @@ groups:
       annotations:
         summary: "La UPS paso a estado bateria"
         description: "La UPS se encuentra en estado bateria hace más de 1 minuto."
+
+- name: webOffline
+  rules:
+    - alert: webOffline
+      expr: probe_success == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "El sitio web {{ $labels.instance }} está offline"
+        description: "El sitio web {{ $labels.instance }} no responde hace más de 1 minuto."

@@ -49,6 +49,9 @@ modules:
         - 1.3.6.1.4.1.534.1.4       # power_percent
         - 1.3.6.1.4.1.534.1.13.2.0        # power_real_w
 
+        - 1.3.6.1.2.1.2.2.1
+        - 1.3.6.1.2.1.31.1.1.1
+
       metrics:
       # =======================
       # INPUT (ENTRADA)
@@ -161,3 +164,31 @@ modules:
         oid: 1.3.6.1.4.1.534.1.5.4.2.0	
         type: gauge
         help: "UPS bypass current (A)"
+
+      # =======================
+      # SWITCH
+      # =======================
+
+      - name: switch_port_status
+        oid: 1.3.6.1.2.1.2.2.1.8
+        type: gauge
+        help: "Operational status of switch ports"
+        indexes:
+          - labelname: ifIndex
+            type: gauge
+
+      - name: switch_port_rx
+        oid: 1.3.6.1.2.1.31.1.1.1.6
+        type: gauge
+        help: "The total number of octets received on the interface"
+        indexes:
+          - labelname: ifIndex
+            type: gauge
+
+      - name: switch_port_tx
+        oid: 1.3.6.1.2.1.31.1.1.1.10
+        type: gauge
+        help: "The total number of octets transmitted on the interface"
+        indexes:
+          - labelname: ifIndex
+            type: gauge
