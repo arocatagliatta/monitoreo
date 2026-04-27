@@ -4,8 +4,8 @@ global:
 route:
   receiver: "discord-notifications"
   group_wait: 30s
-  group_interval: 5m
-  repeat_interval: 4h
+  group_interval: 1m
+  repeat_interval: 12h
 
 receivers:
   - name: "discord-notifications"
@@ -15,7 +15,7 @@ receivers:
         message: |
           {{ range .Alerts }}
           **Alerta:** {{ .Annotations.summary }}
-          **Servicio:** {{ .Labels.name }}
+          **Servicio:** {{ .Labels.job }}
           **Severidad:** {{ .Labels.severity }}
           **Estado:** {{ .Status }}
           {{ end }}

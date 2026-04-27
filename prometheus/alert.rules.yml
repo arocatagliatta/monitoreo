@@ -37,6 +37,24 @@ groups:
       annotations:
         summary: "Corriente en línea L1 supera 30 A"
         description: "La corriente en L1 supera 30 A ({{ $value }} mA)"      
+    
+    - alert: CorrienteBajaL1
+      expr: abb_current_l1 < 20000
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Corriente en línea L1 bajo a 20 A"
+        description: "La corriente en L1 bajo a {{ $value }} mA"     
+
+    - alert: TensiónBajaL1
+      expr: abb_voltage_l1 < 215
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Tensión en línea L1 bajo a 215 V"
+        description: "La tensión en L1 bajo a {{ $value }} V"          
 
     - alert: CorrienteAltaL3
       expr: abb_current_l3 > 20000
@@ -82,9 +100,9 @@ groups:
   rules:
     - alert: webOffline
       expr: probe_success == 0
-      for: 1m
+      for: 5m
       labels:
         severity: critical
       annotations:
         summary: "El sitio web {{ $labels.instance }} está offline"
-        description: "El sitio web {{ $labels.instance }} no responde hace más de 1 minuto."
+        description: "El sitio web {{ $labels.instance }} no responde hace más de 5 minutos."

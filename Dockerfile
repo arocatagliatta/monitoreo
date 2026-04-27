@@ -8,4 +8,4 @@ WORKDIR /app
 
 COPY modbus_export.py /app/modbus_export.py
 
-CMD ["sh", "-c", "while true; do python3 /app/modbus_export.py; sleep 15; done"]
+CMD ["sh", "-c", "while true; do python3 /app/modbus_export.py; sleep 5; done"]

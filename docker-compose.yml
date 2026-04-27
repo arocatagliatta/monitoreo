@@ -30,6 +30,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     restart: unless-stopped
+    environment:
+      - GF_PANELS_DISABLE_SANITIZE_HTML=true
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://localhost:3000/api/health" ]
       interval: 10s
@@ -152,6 +154,17 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     restart: unless-stopped
+
+  go2rtc:
+    image: alexxit/go2rtc
+    container_name: go2rtc
+    network_mode: host # important for WebRTC, HomeKit, UDP cameras
+    privileged: true # only for FFmpeg hardware transcoding
+    restart: unless-stopped # autorestart on fail or config change from WebUI
+    environment:
+      - TZ=America/Argentina/Buenos_Aires # timezone in logs
+    volumes:
+      - ./go2rtc:/config
 
 volumes:
   grafana_data:
