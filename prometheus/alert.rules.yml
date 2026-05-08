@@ -21,6 +21,14 @@ groups:
 
 - name: abb_tablero
   rules:
+    - alert: CorrienteBajaL1
+      expr: abb_current_l1 == 0
+      labels:
+        severity: critical
+      annotations:
+        summary: "Corriente en línea L1 bajo a 0 A"
+        description: "La corriente en L1 bajo a 0 A ({{ $value }} mA)"
+
     - alert: CorrienteBajaL2
       expr: abb_current_l2 == 0
       labels:
@@ -28,6 +36,14 @@ groups:
       annotations:
         summary: "Corriente en línea L2 bajo a 0 A"
         description: "La corriente en L2 bajo a 0 A ({{ $value }} mA)"
+
+    - alert: CorrienteBajaL3
+      expr: abb_current_l3 == 0
+      labels:
+        severity: critical
+      annotations:
+        summary: "Corriente en línea L3 bajo a 0 A"
+        description: "La corriente en L3 bajo a 0 A ({{ $value }} mA)"
 
     - alert: CorrienteAltaL1
       expr: abb_current_l1 > 30000
@@ -38,13 +54,31 @@ groups:
         summary: "Corriente en línea L1 supera 30 A"
         description: "La corriente en L1 supera 30 A ({{ $value }} mA)"      
     
-    - alert: CorrienteBajaL1
-      expr: abb_current_l1 < 20000
+    - alert: CorrienteAltaL2
+      expr: abb_current_l2 > 20000
       for: 1m
       labels:
         severity: warning
       annotations:
-        summary: "Corriente en línea L1 bajo a 20 A"
+        summary: "Corriente en línea L2 supera 20 A"
+        description: "La corriente en L2 supera 20 A ({{ $value }} mA)"    
+
+    - alert: CorrienteAltaL3
+      expr: abb_current_l3 > 20000
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Corriente en línea L3 supera 20 A"
+        description: "La corriente en L3 supera 20 A ({{ $value }} mA)"    
+
+    - alert: CorrienteBajaL1
+      expr: abb_current_l1 < 10000
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Corriente en línea L1 bajo a 10 A"
         description: "La corriente en L1 bajo a {{ $value }} mA"     
 
     - alert: TensiónBajaL1
@@ -56,14 +90,23 @@ groups:
         summary: "Tensión en línea L1 bajo a 215 V"
         description: "La tensión en L1 bajo a {{ $value }} V"          
 
-    - alert: CorrienteAltaL3
-      expr: abb_current_l3 > 20000
-      for: 5m
+    - alert: TensiónBajaL2
+      expr: abb_voltage_l2 < 215
+      for: 1m
       labels:
         severity: warning
       annotations:
-        summary: "Corriente en línea L3 supera 20 A"
-        description: "La corriente en L3 supera 20 A ({{ $value }} mA)"      
+        summary: "Tensión en línea L2 bajo a 215 V"
+        description: "La tensión en L2 bajo a {{ $value }} V"        
+
+    - alert: TensiónBajaL3
+      expr: abb_voltage_l3 < 215
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Tensión en línea L3 bajo a 215 V"
+        description: "La tensión en L3 bajo a {{ $value }} V"        
 
 - name: docker_container
   rules:
@@ -95,6 +138,15 @@ groups:
       annotations:
         summary: "La UPS paso a estado bateria"
         description: "La UPS se encuentra en estado bateria hace más de 1 minuto."
+
+    - alert: UPS bateria por agotarse
+      expr: ups_battery_runtime_remaining_seconds < 3600
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "La bateria de la UPS esta por agotarse"
+        description: "La bateria de la UPS se encuentra por agotarse en {{ $value }} segundos."
 
 - name: webOffline
   rules:

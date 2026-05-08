@@ -106,7 +106,9 @@ scrape_configs:
           - https://epec.ohmc.ar/
           - https://fuego.ohmc.ar/
           - https://reprommat.ohmc.ar/
-
+          - https://estaciones-beta.ohmc.com.ar/
+          - https://tehmex.ohmc.ar/
+          
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
