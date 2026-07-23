@@ -23,7 +23,7 @@ scrape_configs:
       - targets: ['172.16.48.9:9100']    
 
   - job_name: 'modbus_exporter'
-    static_configs:
+    static_configs: 
       - targets: ['172.16.48.127:9101']
 
   - job_name: 'snmp_switch'
@@ -37,6 +37,7 @@ scrape_configs:
           - 172.16.48.2
           - 172.16.48.3
           - 172.16.48.4
+          - 172.16.48.6
 
     relabel_configs:
       - source_labels: [__address__]
@@ -49,6 +50,7 @@ scrape_configs:
         replacement: snmp_exporter:9116
 
   - job_name: 'snmp_ups'
+    scrape_interval: 1m
     metrics_path: /snmp
     params:
       module: [ups]
@@ -70,7 +72,38 @@ scrape_configs:
 
   - job_name: "cadvisor"
     static_configs:
-      - targets: ['cadvisor:8080']
+      - targets: 
+          - '172.16.48.20:9338'
+          - '172.16.48.15:9338'
+          - '172.16.48.18:9338'
+          - '172.16.48.22:9338'
+          - '172.16.48.7:9338'
+          - '172.16.48.16:9338'
+          - '172.16.48.23:9338'
+          - '172.16.48.14:9338'
+          - '172.16.48.21:9338'
+          - '172.16.48.19:9338'
+          - '172.16.48.13:9338'
+
+  - job_name: "node-exporter_swarm"
+    static_configs:
+      - targets: 
+          - '172.16.48.20:9138'
+          - '172.16.48.15:9138'
+          - '172.16.48.18:9138'
+          - '172.16.48.22:9138'
+          - '172.16.48.7:9138'
+          - '172.16.48.16:9138'
+          - '172.16.48.23:9138'
+          - '172.16.48.14:9138'
+          - '172.16.48.21:9138'
+          - '172.16.48.19:9138'
+          - '172.16.48.13:9138'
+
+  - job_name: "swarm-prd-02"
+    static_configs:
+      - targets: 
+          - '172.16.48.13:9138'
 
   - job_name: 'icmp'
     scrape_interval: 5m
@@ -81,6 +114,50 @@ scrape_configs:
       - targets:
           - 200.16.30.242
           - 172.16.48.127
+          - 172.16.48.10
+          - 172.16.48.7
+          - 172.16.48.8  
+          - 172.16.48.9
+          - 172.16.48.89
+          - 172.16.48.90
+          - 172.16.48.91
+          - 172.16.48.92
+          - 172.16.48.5
+          - 172.16.48.71
+          - 172.16.48.50  
+          - 172.16.48.55
+          - 172.16.48.53
+
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+
+      - source_labels: [__param_target]
+        target_label: instance
+
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  - job_name: 'ssh'
+    scrape_interval: 5m
+    metrics_path: /probe
+    params:
+      module: [ssh_check]
+    static_configs:
+      - targets:
+          - 172.16.48.10:22
+          - 172.16.48.7:22
+          - 172.16.48.8:22  
+          - 172.16.48.9:22
+          - 172.16.48.89:22
+          - 172.16.48.90:22
+          - 172.16.48.91:22
+          - 172.16.48.92:22
+          - 172.16.48.5:22
+          - 172.16.48.71:22
+          - 172.16.48.50:22  
+          - 172.16.48.55:22
+          - 172.16.48.53:22
 
     relabel_configs:
       - source_labels: [__address__]

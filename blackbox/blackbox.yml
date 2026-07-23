@@ -15,3 +15,11 @@ modules:
       fail_if_ssl: false
       fail_if_not_ssl: false
       preferred_ip_protocol: "ip4"
+
+  ssh_check:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      preferred_ip_protocol: "ip4"
+      query_response:
+        - expect: "^SSH-2\\.0-"

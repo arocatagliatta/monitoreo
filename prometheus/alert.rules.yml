@@ -16,8 +16,17 @@ groups:
       labels:
         severity: warning
       annotations:
-        summary: Host out of memory ({{ $labels.job }})
+        summary: "Posible OOM en {{ $labels.job }}, memoria disponible {{ $value | humanizePercentage }}"
         description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HostDown
+      expr: up == 0
+      for: 1m 
+      labels:
+        severity: critical
+      annotations:
+        summary: "Servicio {{ $labels.job }} caido (host: {{ $labels.instance }})"
+        description: "El servicio no responde y Prometheus no puede recolectar métricas.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
 - name: abb_tablero
   rules:
@@ -110,14 +119,23 @@ groups:
 
 - name: docker_container
   rules:
-    - alert: DockerContainerDown
-      expr: time() - container_last_seen {name!=""} > 60
-      for: 1m
-      labels:
-        severity: critical
-      annotations:
-        summary: "Contenedor {{ $labels.name }} caído"
-        description: "El contenedor {{ $labels.name }} no reporta métricas hace más de 1 minuto."
+      - alert: docker_swarm_caido
+        expr: |
+          (time() - max by (servicio_limpio) (
+            label_replace(
+              container_last_seen{job="cadvisor", name=~"^[^.]+\\.[^.]+\\..*$"},
+              "servicio_limpio",
+              "$1.$2",
+              "name",
+              "^([^.]+)\\.([^.]+)\\..*$"
+            )
+          )) > 60
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Fallo en el contenedor Swarm: {{ $labels.servicio_limpio }}"
+          description: "La réplica o nodo reflejado en '{{ $labels.servicio_limpio }}' lleva más de 60 segundos sin reportar actividad."
 
 - name: UPS
   rules:

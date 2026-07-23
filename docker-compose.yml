@@ -28,7 +28,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - grafana_data:/var/lib/grafana
+      - /home/arocatagliatta/datagrafana:/var/lib/grafana
     restart: unless-stopped
     environment:
       - GF_PANELS_DISABLE_SANITIZE_HTML=true
@@ -166,8 +166,42 @@ services:
     volumes:
       - ./go2rtc:/config
 
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: goalert
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: goalert
+      POSTGRES_INITDB_ARGS: "-c pgcrypto"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U goalert" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  goalert:
+    image: goalert/goalert:latest
+    container_name: goalert
+    depends_on:
+      postgres:
+        condition: service_started
+    environment:
+      GOALERT_DB_URL: postgres://goalert:admin@postgres:5432/goalert
+      GOALERT_DATA_ENCRYPTION_KEY: super-awesome-secret-key-change-me # CAMBIAR EN PRODUCCIÓN
+      GOALERT_PUBLIC_URL: http://localhost:8081 # CAMBIAR EN PRODUCCIÓN
+      GOALERT_ALLOW_SELF_SIGNUP: "true" # Permitir registro (cambiar a false en producción)
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
 volumes:
-  grafana_data:
-  prometheus_data:
   alertmanager_data:
   portainer_data:
+  postgres_data:

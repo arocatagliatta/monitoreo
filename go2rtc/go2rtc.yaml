@@ -1,3 +1,9 @@
 streams:
-    dahua:
-        - "rtsp://admin:s0p0rt32023$$@172.22.111.243:554/cam/realmonitor?channel=1&subtype=0"
+    disyuntores:
+        - "rtsp://admin:s0p0rt32023$$@172.16.48.115:554/cam/realmonitor?channel=1&subtype=0"
+    bunker:
+        - "rtsp://admin:s0p0rt32023$$@172.16.48.116:554/cam/realmonitor?channel=1&subtype=0"
+    LHM:
+        - "rtsp://admin:s0p0rt32023$$@172.16.48.117:554/cam/realmonitor?channel=1&subtype=0"
+    LHM entrada:
+        - "rtsp://admin:s0p0rt32023$$@172.16.48.118:554/cam/realmonitor?channel=1&subtype=0"
