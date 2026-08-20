@@ -16,17 +16,17 @@ groups:
       labels:
         severity: warning
       annotations:
-        summary: "Posible OOM en {{ $labels.job }}, memoria disponible {{ $value | humanizePercentage }}"
-        description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+        summary: "Posible OOM en servidor"
+        description: "Posible OOM en {{ $labels.job }}, memoria disponible {{ $value | humanizePercentage }}"
 
     - alert: HostDown
       expr: up == 0
-      for: 1m 
+      for: 5m 
       labels:
         severity: critical
       annotations:
-        summary: "Servicio {{ $labels.job }} caido (host: {{ $labels.instance }})"
-        description: "El servicio no responde y Prometheus no puede recolectar métricas.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+        summary: "Servicio no responde a Prometheus"
+        description: "Servicio {{ $labels.job }} caido"
 
 - name: abb_tablero
   rules:
@@ -36,7 +36,7 @@ groups:
         severity: critical
       annotations:
         summary: "Corriente en línea L1 bajo a 0 A"
-        description: "La corriente en L1 bajo a 0 A ({{ $value }} mA)"
+        description: "Corriente en línea L1 bajo a 0 A"
 
     - alert: CorrienteBajaL2
       expr: abb_current_l2 == 0
@@ -44,7 +44,7 @@ groups:
         severity: critical
       annotations:
         summary: "Corriente en línea L2 bajo a 0 A"
-        description: "La corriente en L2 bajo a 0 A ({{ $value }} mA)"
+        description: "Corriente en línea L2 bajo a 0 A"
 
     - alert: CorrienteBajaL3
       expr: abb_current_l3 == 0
@@ -52,7 +52,7 @@ groups:
         severity: critical
       annotations:
         summary: "Corriente en línea L3 bajo a 0 A"
-        description: "La corriente en L3 bajo a 0 A ({{ $value }} mA)"
+        description: "Corriente en línea L3 bajo a 0 A"
 
     - alert: CorrienteAltaL1
       expr: abb_current_l1 > 30000
@@ -61,7 +61,7 @@ groups:
         severity: warning
       annotations:
         summary: "Corriente en línea L1 supera 30 A"
-        description: "La corriente en L1 supera 30 A ({{ $value }} mA)"      
+        description: "La corriente en L1 es {{ $value }} mA"      
     
     - alert: CorrienteAltaL2
       expr: abb_current_l2 > 20000
@@ -70,7 +70,7 @@ groups:
         severity: warning
       annotations:
         summary: "Corriente en línea L2 supera 20 A"
-        description: "La corriente en L2 supera 20 A ({{ $value }} mA)"    
+        description: "La corriente en L2 es {{ $value }} mA"    
 
     - alert: CorrienteAltaL3
       expr: abb_current_l3 > 20000
@@ -79,7 +79,7 @@ groups:
         severity: warning
       annotations:
         summary: "Corriente en línea L3 supera 20 A"
-        description: "La corriente en L3 supera 20 A ({{ $value }} mA)"    
+        description: "La corriente en L3 es {{ $value }} mA"    
 
     - alert: CorrienteBajaL1
       expr: abb_current_l1 < 10000
@@ -88,7 +88,7 @@ groups:
         severity: warning
       annotations:
         summary: "Corriente en línea L1 bajo a 10 A"
-        description: "La corriente en L1 bajo a {{ $value }} mA"     
+        description: "La corriente en L1 es {{ $value }} mA"     
 
     - alert: TensiónBajaL1
       expr: abb_voltage_l1 < 215
@@ -97,7 +97,7 @@ groups:
         severity: warning
       annotations:
         summary: "Tensión en línea L1 bajo a 215 V"
-        description: "La tensión en L1 bajo a {{ $value }} V"          
+        description: "La tensión en L1 es {{ $value }} V"          
 
     - alert: TensiónBajaL2
       expr: abb_voltage_l2 < 215
@@ -106,7 +106,7 @@ groups:
         severity: warning
       annotations:
         summary: "Tensión en línea L2 bajo a 215 V"
-        description: "La tensión en L2 bajo a {{ $value }} V"        
+        description: "La tensión en L2 es {{ $value }} V"        
 
     - alert: TensiónBajaL3
       expr: abb_voltage_l3 < 215
@@ -115,7 +115,7 @@ groups:
         severity: warning
       annotations:
         summary: "Tensión en línea L3 bajo a 215 V"
-        description: "La tensión en L3 bajo a {{ $value }} V"        
+        description: "La tensión en L3 es {{ $value }} V"        
 
 - name: docker_container
   rules:
@@ -132,10 +132,10 @@ groups:
           )) > 60
         for: 1m
         labels:
-          severity: critical
+          severity: warning
         annotations:
-          summary: "Fallo en el contenedor Swarm: {{ $labels.servicio_limpio }}"
-          description: "La réplica o nodo reflejado en '{{ $labels.servicio_limpio }}' lleva más de 60 segundos sin reportar actividad."
+          summary: "Fallo en contenedor Swarm"
+          description: "Contenedor Swarm: {{ $labels.servicio_limpio }}"
 
 - name: UPS
   rules:
@@ -152,7 +152,7 @@ groups:
       expr: ups_status == 5
       for: 1m
       labels:
-        severity: warning
+        severity: critical
       annotations:
         summary: "La UPS paso a estado bateria"
         description: "La UPS se encuentra en estado bateria hace más de 1 minuto."
@@ -161,7 +161,7 @@ groups:
       expr: ups_battery_runtime_remaining_seconds < 3600
       for: 1m
       labels:
-        severity: warning
+        severity: critical
       annotations:
         summary: "La bateria de la UPS esta por agotarse"
         description: "La bateria de la UPS se encuentra por agotarse en {{ $value }} segundos."
@@ -174,5 +174,5 @@ groups:
       labels:
         severity: critical
       annotations:
-        summary: "El sitio web {{ $labels.instance }} está offline"
-        description: "El sitio web {{ $labels.instance }} no responde hace más de 5 minutos."
+        summary: "Web offline"
+        description: "No responde {{ $labels.job }}."

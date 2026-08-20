@@ -1,0 +1,13 @@
+# Archivos de entorno y variables secretas
+.env
+.env.*
+!.env.example
+
+# Archivos de texto
+*.txt
+
+# Archivos del sistema operativo e IDEs (Recomendado)
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

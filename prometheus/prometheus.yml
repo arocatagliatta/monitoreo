@@ -27,6 +27,8 @@ scrape_configs:
       - targets: ['172.16.48.127:9101']
 
   - job_name: 'snmp_switch'
+    scrape_interval: 1m
+    scrape_timeout: 30s
     metrics_path: /snmp
     params:
       module: [if_mib, mikrotik, hrDevice, hrSWInstalled, hrSWRun, hrSWRunPerf, hrStorage, hrSystem]
@@ -100,7 +102,7 @@ scrape_configs:
           - '172.16.48.19:9138'
           - '172.16.48.13:9138'
 
-  - job_name: "swarm-prd-02"
+  - job_name: "swarm-prd-m02"
     static_configs:
       - targets: 
           - '172.16.48.13:9138'
@@ -124,9 +126,8 @@ scrape_configs:
           - 172.16.48.92
           - 172.16.48.5
           - 172.16.48.71
-          - 172.16.48.50  
-          - 172.16.48.55
-          - 172.16.48.53
+#          - 172.16.48.50  
+#          - 172.16.48.55
 
     relabel_configs:
       - source_labels: [__address__]
@@ -154,10 +155,8 @@ scrape_configs:
           - 172.16.48.91:22
           - 172.16.48.92:22
           - 172.16.48.5:22
-          - 172.16.48.71:22
-          - 172.16.48.50:22  
-          - 172.16.48.55:22
-          - 172.16.48.53:22
+#          - 172.16.48.50:22  
+#          - 172.16.48.55:22
 
     relabel_configs:
       - source_labels: [__address__]
@@ -171,6 +170,7 @@ scrape_configs:
 
   - job_name: 'http'
     scrape_interval: 5m
+    scrape_timeout: 1m  
     metrics_path: /probe
     params:
       module: [http_check]
@@ -178,11 +178,10 @@ scrape_configs:
       - targets:
           - https://ohmc.ar/
           - https://webmet.ohmc.ar/ 
+          - https://radares.ohmc.ar/
           - https://wrf.ohmc.ar/  
           - https://estaciones.ohmc.ar/
           - https://epec.ohmc.ar/
-          - https://fuego.ohmc.ar/
-          - https://reprommat.ohmc.ar/
           - https://estaciones-beta.ohmc.com.ar/
           - https://tehmex.ohmc.ar/
           
@@ -195,6 +194,36 @@ scrape_configs:
 
       - target_label: __address__
         replacement: blackbox-exporter:9115
+
+  - job_name: 'snmp_vpn'
+    scrape_interval: 1m
+    scrape_timeout: 30s
+    metrics_path: /snmp
+    params:
+      module: [eaton_ups]
+
+    static_configs:
+      - targets:
+          - 192.168.101.6
+          - 192.168.101.7
+          - 192.168.116.6
+          - 192.168.116.7
+          - 192.168.117.6
+          - 192.168.117.7
+          - 192.168.106.6
+          - 192.168.106.7
+          - 192.168.107.6
+          - 192.168.107.7
+          
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+
+      - source_labels: [__param_target]
+        target_label: instance
+
+      - target_label: __address__
+        replacement: 172.17.0.1:9117    
 
 alerting:
   alertmanagers:

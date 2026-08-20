@@ -84,7 +84,7 @@ services:
     ports:
       - "9116:9116"
     volumes:
-      - /home/arocatagliatta/Monitoreo/snmp/snmp.yml:/etc/snmp_exporter/snmp.yml #Remplazar por ruta final del archivo snmp.yml
+      - /home/arocatagliatta/Monitoreo/snmp/snmpnew.yml:/etc/snmp_exporter/snmp.yml #Remplazar por ruta final del archivo snmp.yml
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://localhost:9116/metrics >/dev/null" ]
@@ -143,18 +143,6 @@ services:
       retries: 3
       start_period: 20s
 
-  portainer:
-    image: portainer/portainer-ce:2.19.4
-    container_name: portainer
-    ports:
-      - "9443:9443" # UI/API segura (https)
-      - "9000:9000" # UI/API segura (http)
-      - "8000:8000" # Opcional: túnel Docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-    restart: unless-stopped
-
   go2rtc:
     image: alexxit/go2rtc
     container_name: go2rtc
@@ -170,9 +158,9 @@ services:
     image: postgres:15-alpine
     container_name: postgres
     environment:
-      POSTGRES_USER: goalert
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: goalert
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_INITDB_ARGS: "-c pgcrypto"
     ports:
       - "5432:5432"
@@ -193,10 +181,10 @@ services:
       postgres:
         condition: service_started
     environment:
-      GOALERT_DB_URL: postgres://goalert:admin@postgres:5432/goalert
-      GOALERT_DATA_ENCRYPTION_KEY: super-awesome-secret-key-change-me # CAMBIAR EN PRODUCCIÓN
-      GOALERT_PUBLIC_URL: http://localhost:8081 # CAMBIAR EN PRODUCCIÓN
-      GOALERT_ALLOW_SELF_SIGNUP: "true" # Permitir registro (cambiar a false en producción)
+      GOALERT_DB_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      GOALERT_DATA_ENCRYPTION_KEY: ${GOALERT_ENCRYPTION_KEY}
+      GOALERT_PUBLIC_URL: ${GOALERT_PUBLIC_URL}
+      GOALERT_ALLOW_SELF_SIGNUP: "${GOALERT_ALLOW_SELF_SIGNUP}"
     ports:
       - "8081:8081"
     restart: unless-stopped
