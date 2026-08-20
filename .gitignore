@@ -5,6 +5,7 @@
 
 # Archivos de texto
 *.txt
+lectura_filtrada.txt
 
 # Archivos del sistema operativo e IDEs (Recomendado)
 .DS_Store
